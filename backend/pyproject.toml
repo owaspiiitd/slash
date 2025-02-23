@@ -1,0 +1,19 @@
+[project]
+name = "slash-backend"
+version = "0.1.0"
+description = "This is the backend for Slash, the cryptic hunt platform"
+authors = [
+    {name = "Mehul Arora",email = "mehul21066@iiitd.ac.in"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi (>=0.115.8,<0.116.0)",
+    "uvicorn (>=0.34.0,<0.35.0)",
+    "pydantic-settings (>=2.8.0,<3.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

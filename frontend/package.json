@@ -1,0 +1,9 @@
+{
+  "name": "slash-frontend",
+  "version": "1.0.0",
+  "description": "This is the frontend for Slash, the cryptic hunt platform",
+  "main": "index.js",
+  "repository": "https://github.com/owaspiiitd/slash",
+  "author": "Mehul Arora <mehul21066@iiitd.ac.in>",
+  "license": "MIT"
+}
