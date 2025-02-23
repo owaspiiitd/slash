@@ -19,5 +19,29 @@ class UvicornConfig(BaseSettings):
     class Config:
         env_prefix = "UVICORN_"
 
+
+class FirebaseConfig(BaseSettings):
+    API_KEY: str
+    JWT_KEY: str
+
+    class Config:
+        env_prefix = "FIREBASE_"
+
+
+class DBConfig(BaseSettings):
+    HOST: str
+    PORT: int
+    USER: str
+    PASSWORD: str
+    NAME: str
+    POOL_SIZE: int = 10
+    POOL_RECYCLE: int = 30
+
+    class Config:
+        env_prefix = "DB_"
+
+
 class CONFIG:
     UVICORN = UvicornConfig()
+    FIREBASE = FirebaseConfig()
+    DB = DBConfig()

@@ -3,7 +3,17 @@
   "version": "1.0.0",
   "description": "This is the frontend for Slash, the cryptic hunt platform",
   "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
   "repository": "https://github.com/owaspiiitd/slash",
   "author": "Mehul Arora <mehul21066@iiitd.ac.in>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest"
+  }
 }
