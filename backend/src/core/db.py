@@ -1,3 +1,4 @@
+import urllib.parse
 from typing import Annotated
 
 import motor.motor_asyncio
@@ -9,10 +10,14 @@ from slash.user.models import User
 
 
 def get_mongodb_url() -> str:
+    # Escape the username and password to ensure they're RFC 3986 compliant
+    username = urllib.parse.quote_plus(CONFIG.DB.USER)
+    password = urllib.parse.quote_plus(CONFIG.DB.PASSWORD)
+
     if CONFIG.DB.IS_CLOUD:
-        return f"mongodb+srv://{CONFIG.DB.USER}:{CONFIG.DB.PASSWORD}@{CONFIG.DB.HOST}:{CONFIG.DB.PORT}/{CONFIG.DB.NAME}"
+        return f"mongodb+srv://{username}:{password}@{CONFIG.DB.HOST}:{CONFIG.DB.PORT}/{CONFIG.DB.NAME}"
     else:
-        return f"mongodb://{CONFIG.DB.USER}:{CONFIG.DB.PASSWORD}@{CONFIG.DB.HOST}:{CONFIG.DB.PORT}/{CONFIG.DB.NAME}"
+        return f"mongodb://{username}:{password}@{CONFIG.DB.HOST}:{CONFIG.DB.PORT}/{CONFIG.DB.NAME}"
 
 
 # Initialize the MongoDB client
