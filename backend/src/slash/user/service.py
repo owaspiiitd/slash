@@ -1,9 +1,10 @@
 import logging
-from typing import Annotated
+from typing import Annotated, Any
 
 import httpx
 import jwt
 from fastapi import Depends, Header, HTTPException, status
+from pydantic import BaseModel
 
 from core.config import CONFIG
 
@@ -12,11 +13,10 @@ from .models import User
 logger = logging.getLogger("COMMON_USER_SERVICE")
 
 
-class AuthToken:
+class AuthToken(BaseModel):
     __algorithm = "HS256"
 
-    def __init__(self, data: dict):
-        self.data = data
+    data: dict[str, Any]
 
     def to_jwt(self) -> str:
         return jwt.encode(self.data, key=CONFIG.FIREBASE.JWT_KEY, algorithm=self.__algorithm)
@@ -27,21 +27,26 @@ class AuthToken:
         return cls(data=data)
 
     @classmethod
+    def __from_jwt_unsafe(cls, access_token: str):
+        return cls(data=jwt.decode(access_token, "", algorithms=["RS256"], options={"verify_signature": False}))
+
+    @classmethod
     async def validate_firebase_token(cls, token: str):
         try:
             async with httpx.AsyncClient() as client:
                 res = await client.post(
                     f"https://identitytoolkit.googleapis.com/v1/accounts:lookup?key={CONFIG.FIREBASE.API_KEY}",
-                    data={"idToken": token},
+                    json={"idToken": token},
                 )
             if res.status_code != 200:
+                logger.error(f"Firebase token lookup failed: {res.status_code} - {res.text}")
                 return None, None
             # Decode token without verifying for extracting fields (do not use unverified decode in production)
-            data = jwt.decode(token, options={"verify_signature": False})
+            data = cls.__from_jwt_unsafe(token)
             # Wrap token data into a simple object for attribute-style access
-            TokenData = type("TokenData", (), {"data": data})
-            return str(res.json()["users"][0]["email"]).lower(), TokenData
-        except Exception:
+            return str(res.json()["users"][0]["email"]).lower(), data
+        except Exception as e:
+            logger.exception("Error validating firebase token")
             return None, None
 
 

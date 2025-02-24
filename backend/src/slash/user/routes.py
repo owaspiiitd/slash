@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 
 from common.exceptions import UnauthorizedException
 from core.db import DBSession
@@ -37,7 +37,7 @@ async def register_user(user_data: UserCreate, db_session: DBSession):
 @router.post("/login")
 async def login_user(user_data: UserCreate, db_session: DBSession):
     email, token_data = await AuthToken.validate_firebase_token(user_data.google_token)
-    if not email:
+    if not email or not token_data:
         raise UnauthorizedException(detail="Invalid Google token")
     existing_user = await User.find_one(User.email == email)
     if not existing_user:

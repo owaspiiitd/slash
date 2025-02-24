@@ -12,8 +12,18 @@
   "author": "Mehul Arora <mehul21066@iiitd.ac.in>",
   "license": "MIT",
   "dependencies": {
+    "@mantine/carousel": "^7.17.0",
+    "@mantine/core": "^7.17.0",
+    "@mantine/hooks": "^7.17.0",
+    "@mantine/notifications": "^7.17.0",
+    "@tabler/icons-react": "^3.30.0",
+    "firebase": "^11.3.1",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest"
+  },
+  "devDependencies": {
+    "@types/react": "19.0.10",
+    "typescript": "5.7.3"
   }
 }

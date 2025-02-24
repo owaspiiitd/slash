@@ -15,7 +15,7 @@ def get_mongodb_url() -> str:
     password = urllib.parse.quote_plus(CONFIG.DB.PASSWORD)
 
     if CONFIG.DB.IS_CLOUD:
-        return f"mongodb+srv://{username}:{password}@{CONFIG.DB.HOST}:{CONFIG.DB.PORT}/{CONFIG.DB.NAME}"
+        return f"mongodb+srv://{username}:{password}@{CONFIG.DB.HOST}/{CONFIG.DB.NAME}"
     else:
         return f"mongodb://{username}:{password}@{CONFIG.DB.HOST}:{CONFIG.DB.PORT}/{CONFIG.DB.NAME}"
 
