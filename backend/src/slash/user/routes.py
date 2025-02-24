@@ -1,12 +1,11 @@
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter
 
 from common.exceptions import UnauthorizedException
-from core.db import DBSession
 
 from .models import User
-from .schemas import UserCreate, UserSchema
+from .schemas import Token, UserCreate, UserSchema
 from .service import AuthToken, CurrentUser
 
 router = APIRouter(prefix="/user", tags=["user"])
@@ -18,7 +17,7 @@ async def get_me(user: CurrentUser):
 
 
 @router.post("/register", response_model=UserSchema)
-async def register_user(user_data: UserCreate, db_session: DBSession):
+async def register_user(user_data: UserCreate):
     email, token_data = await AuthToken.validate_firebase_token(user_data.google_token)
     if not email:
         raise UnauthorizedException(detail="Invalid Google token")
@@ -34,8 +33,8 @@ async def register_user(user_data: UserCreate, db_session: DBSession):
     return new_user
 
 
-@router.post("/login")
-async def login_user(user_data: UserCreate, db_session: DBSession):
+@router.post("/login", response_model=Token)
+async def login_user(user_data: UserCreate):
     email, token_data = await AuthToken.validate_firebase_token(user_data.google_token)
     if not email or not token_data:
         raise UnauthorizedException(detail="Invalid Google token")
@@ -50,7 +49,7 @@ async def login_user(user_data: UserCreate, db_session: DBSession):
     jwt_token = AuthToken(
         data={
             "email": existing_user.email,
-            "exp": datetime.utcnow() + timedelta(days=365),
+            "exp": datetime.now(UTC) + timedelta(days=365),
         }
     ).to_jwt()
-    return {"access_token": jwt_token, "token_type": "bearer"}
+    return Token(access_token=jwt_token, token_type="bearer")

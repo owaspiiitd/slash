@@ -1,4 +1,4 @@
-import traceback
+from contextlib import asynccontextmanager
 
 import uvicorn
 from fastapi import FastAPI, HTTPException, Request
@@ -9,23 +9,29 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from common.exceptions import custom_http_exception_handler, validation_exception_handler
 from core.config import CONFIG
+from core.db import init_db
 from slash.user import router as user_router
 
-LOCAL_ORIGINS = [
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await init_db()
+    yield
+
+
+app = FastAPI(title="Slash API", version="1.0.0", default_response_class=ORJSONResponse, lifespan=lifespan)
+
+origins = [
     "http://localhost",
     "http://localhost:3000",
-    "http://localhost:8080",
-]
-
-PUBLIC_ORIGINS = [
+    "http://localhost:9000",
     "https://slash.win",
     "https://play.slash.win",
 ]
 
-app = FastAPI(title="Slash API", version="1.0.0", default_response_class=ORJSONResponse)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=LOCAL_ORIGINS + PUBLIC_ORIGINS,
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
