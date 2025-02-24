@@ -29,13 +29,13 @@ class FirebaseConfig(BaseSettings):
 
 
 class DBConfig(BaseSettings):
-    HOST: str
-    PORT: int
+    HOST: str = "localhost"
+    PORT: int | None = None
     USER: str
     PASSWORD: str
     NAME: str
-    POOL_SIZE: int = 10
-    POOL_RECYCLE: int = 30
+    IS_CLOUD: bool = False
+    POOL_SIZE: int = 100
 
     class Config:
         env_prefix = "DB_"

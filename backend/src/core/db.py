@@ -9,7 +9,10 @@ from slash.user.models import User
 
 
 def get_mongodb_url() -> str:
-    return f"mongodb://{CONFIG.DB.USER}:{CONFIG.DB.PASSWORD}@{CONFIG.DB.HOST}:{CONFIG.DB.PORT}/{CONFIG.DB.NAME}"
+    if CONFIG.DB.IS_CLOUD:
+        return f"mongodb+srv://{CONFIG.DB.USER}:{CONFIG.DB.PASSWORD}@{CONFIG.DB.HOST}:{CONFIG.DB.PORT}/{CONFIG.DB.NAME}"
+    else:
+        return f"mongodb://{CONFIG.DB.USER}:{CONFIG.DB.PASSWORD}@{CONFIG.DB.HOST}:{CONFIG.DB.PORT}/{CONFIG.DB.NAME}"
 
 
 # Initialize the MongoDB client
